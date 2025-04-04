@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Cinzel } from "next/font/google";
-import "./globals.css";
-import NavBar from "@/components/navbar";
-import Footer from "@/components/footer";
+import type { Metadata } from "next"
+import { Geist, Geist_Mono, Cinzel } from "next/font/google"
+import "./globals.css"
+import NavBar from "@/components/navbar"
+import Footer from "@/components/footer"
 
 export default function RootLayout({
   children,
