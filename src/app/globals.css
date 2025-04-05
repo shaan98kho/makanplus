@@ -38,7 +38,7 @@
 }
 
 body {
-  background: var(--black);
+  background: var(--lightBlack);
   color: var(--lightGray);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
@@ -91,13 +91,18 @@ footer svg {
 
 .form {
   background: var(--darkBlack);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 .form > h1 {
   font-size: 32px;
   font-weight: bold;
   padding-bottom: 24px;
-  color: var(--lightGray);
+  color: var(--);
+}
+
+.form > h1:has(+ p) {
+  padding-bottom: 0;
 }
 
 .field-wrap {
@@ -121,12 +126,34 @@ footer svg {
   transition: border ease-in-out 0.3s;
 }
 
-.field-wrap > input:focus {
+.field-wrap > input::placeholder,
+.field-wrap > select {
+  color: var(--gray03);
+}
+
+.field-wrap > select option {
+  color: var(--black);
+}
+
+.field-wrap > input:focus,
+.field-wrap > select:focus {
   border-color: var(--white);
+}
+
+.field-wrap > select {
+  border-bottom: 1px solid;
+  border-color: var(--gray02);
+  color: var(--);
+  width: 100%;
+  outline: none;
 }
 
 .field-wrap + .field-wrap {
   padding-top: 24px;
+}
+
+.highlight {
+  color: var(--primary);
 }
 
 .btn {

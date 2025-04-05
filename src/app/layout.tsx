@@ -17,7 +17,7 @@ export default function RootLayout({
             {label: "Home", path: "/"},
             {label: "About Us", path: "/about"},
             {label: "Market", path: "/market"},
-            {label: "Sign In", path: "/login"},
+            {label: "Sign In", path: "/auth/login"},
           ]}/>
           <main className="px-8 py-3">
             {children}

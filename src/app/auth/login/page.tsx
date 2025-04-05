@@ -58,7 +58,7 @@ export default function Login() {
                 />
             </div>
             <button type="submit" onClick={handleSubmit} className="btn mt-9 w-full">Login</button>
-            <p className="pt-2">Don't have an account yet? <Link href="/signUp">Sign Up</Link></p>
+            <p className="pt-2">Don't have an account yet? <Link href="/auth/signUp" className="underline">Sign Up</Link></p>
         </GenericForm>
     </>
 }
