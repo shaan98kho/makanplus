@@ -1,5 +1,5 @@
 import { auth, db } from "@/lib/firebase"
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { setDoc, doc } from "firebase/firestore/lite"
 import { createAsyncThunk } from "@reduxjs/toolkit"
 
@@ -16,6 +16,11 @@ interface RegisterPayload {
         coins?: number,
         completed_module?: number,
     }
+}
+
+interface LoginPayload {
+    email: string,
+    password: string,
 }
 
 export const registerUser = createAsyncThunk(
@@ -58,6 +63,24 @@ export const registerUser = createAsyncThunk(
         catch(e: any) {
             console.error("Error during registration:", e.message);
 
+            return rejectWithValue(e.message)
+        }
+    }
+)
+
+export const signIn = createAsyncThunk(
+    'auth/signInWithEmailAndPassword', 
+    async ({email, password}: LoginPayload, {rejectWithValue}) => {
+        try {
+            const userCreds = await signInWithEmailAndPassword(auth, email, password)
+
+            const user = userCreds.user
+
+            return user
+
+        }
+        catch(e: any) {
+            console.log("Error during login:", e.message)
             return rejectWithValue(e.message)
         }
     }

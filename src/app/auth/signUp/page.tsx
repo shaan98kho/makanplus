@@ -1,15 +1,16 @@
 "use client"
 
-import React, { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { useDispatch, useSelector } from "react-redux"
 import { registerUser } from "@/store/features/user/authThunks"
-import { RootState } from "@/store/store"
+import { RootState, AppDispatch } from "@/store/store"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 import GenericForm from "@/components/genericForm"
-import { AppDispatch } from "@/store/store"
+import Toast from "@/components/toast"
 
 interface UserData {
     email: string,
@@ -46,12 +47,14 @@ export default function SignUp() {
         name: ''
     });
     const [confirmPassword, setConfirmPassword] = useState<string>('')
-
     const [pwError, setPwError] = useState<string>()
-
     const [userRole, setuserRole] = useState<string>('')
     const dispatch: AppDispatch = useDispatch()
-    const { loading, error } = useSelector((state: RootState) => state.auth)
+    const { loading, success } = useSelector((state: RootState) => state.auth)
+    const [toastMsg, setToastMsg] = useState<string>('')
+    const router = useRouter()
+
+
     const clearInput = () => {
         setFormData(() => {
             return {
@@ -93,12 +96,15 @@ export default function SignUp() {
                   coins: formData.coins,
                   completed_module: formData.completed_module,
                 },
-              };
-              console.log(JSON.stringify(payload, null, 2));
+              }              
 
             dispatch(registerUser(payload))
         }
     }
+
+    useEffect(() => {
+        success && setToastMsg("Registration is successful!")
+    }, [success])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
         setFormData({
@@ -112,6 +118,12 @@ export default function SignUp() {
     }
 
     return <>
+        {toastMsg && <Toast message={toastMsg} onClose={() => {
+            setToastMsg('')
+            clearInput()
+            router.replace("/auth/login")
+        }}/>}
+
         <GenericForm onSubmit={handleSubmit}>
             <h1>Sign Up{userRole === '' && " As"}</h1>
             {userRole !== '' && 

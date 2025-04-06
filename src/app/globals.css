@@ -64,19 +64,15 @@ a:not(svg) {
   transition: color ease-in-out 0.2s;
 }
 
-.navbar svg, 
+.navbar > a:not(.logo),
+.nav-panel > a,
 .nav-panel svg {
  transition: color ease-in-out 0.2s; 
 }
 
-.navbar svg:hover, 
-.nav-panel svg:hover {
-  color: var(--white);
-}
-
-
-.navbar > a:not(.logo),
-.nav-panel > a:hover {
+.navbar > a:not(.logo):not(.active):hover,
+.nav-panel > a:not(.active):hover,
+.nav-panel svg:hover  {
   color: var(--white);
 }
 
@@ -145,6 +141,17 @@ footer svg {
   transition: border ease-in-out 0.3s;
 }
 
+.field-wrap > input:-webkit-autofill,
+.field-wrap > input:-webkit-autofill,
+.field-wrap > input:-webkit-autofill:hover, 
+.field-wrap > input:-webkit-autofill:focus, 
+.field-wrap > input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: #ffffff;
+  transition: background-color 5000s ease-in-out 0s, border ease-in-out 0.3s;
+  box-shadow: inset 0 0 20px 20px var(--darkBlack);
+}
+
 .field-wrap > input::placeholder,
 .field-wrap > select {
   color: var(--gray03);
@@ -199,4 +206,23 @@ footer svg {
 
 .credits:hover {
   color: var(--lightGray);
+}
+
+.toast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-msg {
+  padding: 12px;
+  background: var(--darkBlack);
+  text-align: center;
+  border-radius: 12px;
 }
