@@ -1,31 +1,103 @@
 "use client"
+
 import React, { useState } from "react"
+
+import { useDispatch, useSelector } from "react-redux"
+import { registerUser } from "@/store/features/user/authThunks"
+import { RootState } from "@/store/store"
+
 import Link from "next/link"
+
 import GenericForm from "@/components/genericForm"
+import { AppDispatch } from "@/store/store"
 
 interface UserData {
-    name: string,
     email: string,
     password: string,
-    businessName?: string,
-    businessId?: string,
     role:string,
+    address: string,
+
+    // fields specific to business partners
+    business_name?: string,
+    business_id?: string,
+    business_type?: string,
+
+    // fields specific to customers
+    coins?: number,
+    completed_module?: number,
+    name?: string
 }
 
 export default function SignUp() {
     const [formData, setFormData] = useState<UserData>({
-        name: '',
         email: '',
         password: '',
         role: '',
-        // Fields specific to business partners
-        businessName: '',
-        businessId: '',
-    });
+        address: '',
 
-    const [userType, setUserType] = useState<string  | null>(null)
+        // fields specific to business partners
+        business_name: '',
+        business_id: '',
+        business_type: '',
+
+        // fields specific to customers
+        coins: 0,
+        completed_module: 0,
+        name: ''
+    });
+    const [confirmPassword, setConfirmPassword] = useState<string>('')
+
+    const [pwError, setPwError] = useState<string>()
+
+    const [userRole, setuserRole] = useState<string>('')
+    const dispatch: AppDispatch = useDispatch()
+    const { loading, error } = useSelector((state: RootState) => state.auth)
+    const clearInput = () => {
+        setFormData(() => {
+            return {
+                email: '',
+                password: '',
+                address: '',
+                role: '',
+
+                // fields specific to business partners
+                business_name: '',
+                business_id: '',
+                business_type: '',
+
+                // fields specific to customers
+                coins: 0,
+                completed_module: 0,
+                name: ''
+            }
+        })
+    }
+
     const handleSubmit = () => {
-        console.log("submitted!")
+        if (formData.password !== confirmPassword) {
+            setPwError("Passwords do not match!");
+            return;
+        } else {
+            setPwError('')
+            const payload = {
+                email: formData.email,
+                password: formData.password,
+                address: formData.address,
+                additionalData: {
+                  role: formData.role as 'customer' | 'business_partner',
+                  name: formData.name,
+                  business_id: formData.business_id,
+                  address: formData.address,
+                  business_type: formData.business_type,
+                  business_name: formData.business_name,
+                  coins: formData.coins,
+                  completed_module: formData.completed_module,
+                },
+              };
+              console.log(JSON.stringify(payload, null, 2));
+
+            dispatch(registerUser(payload))
+        }
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
@@ -35,24 +107,49 @@ export default function SignUp() {
         })
     }
 
+    const handleConfirmPassword = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        setConfirmPassword(e.target.value)
+    }
+
     return <>
         <GenericForm onSubmit={handleSubmit}>
-            <h1>Sign Up{userType === null && " As"}</h1>
-            {userType !== null && 
-                <p className="pb-6">Changed your mind? Sign up as <span onClick={() => setUserType(userType === "customer" ? "businessPartner" : "customer")} className="highlight cursor-pointer underline">{userType === "customer" ? "Business Partner" : "Customer"}</span> instead</p>
+            <h1>Sign Up{userRole === '' && " As"}</h1>
+            {userRole !== '' && 
+                <p className="pb-6">Changed your mind? Sign up as <span onClick={() => {{
+                    setuserRole(userRole === "customer" ? "business_partner" : "customer")
+                    clearInput()
+                    setFormData({
+                        ...formData,
+                        role: userRole === "customer" ? "business_partner" : "customer"
+                    })
+                }}} className="highlight cursor-pointer underline">{userRole === "customer" ? "Business Partner" : "Customer"}</span> instead</p>
             }
 
-            {userType === null && 
+            {userRole === '' && 
                 <div className="m-auto">
                     <div className="flex gap-5 justify-center items-center">
-                        <button className="btn" onClick={() => setUserType("customer")}>Customer</button>
+                        <button className="btn" onClick={() => {
+                            setuserRole("customer")
+                            clearInput()
+                            setFormData({
+                                ...formData,
+                                role: "customer"
+                            })
+                        }}>Customer</button>
                         <span className="font-bold">or</span>
-                        <button className="btn" onClick={() => setUserType("businessPartner")}>Business Partner</button>
+                        <button className="btn" onClick={() => {
+                            setuserRole("business_partner")
+                            clearInput()
+                            setFormData({
+                                ...formData,
+                                role: "business_partner"
+                            })
+                        }}>Business Partner</button>
                     </div>
                 </div>
             }
 
-            {userType !== null &&
+            {userRole !== '' &&
                 <div>
                     <div className="field-wrap">
                         <label htmlFor="email">Email</label>
@@ -66,39 +163,65 @@ export default function SignUp() {
                             required
                         />
                     </div>
-                    {userType === "businessPartner" && 
+                    {userRole === "customer" &&
+                        <div className="field-wrap">
+                            <label htmlFor="name">Name</label>
+                            <input 
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder="John Doe"
+                                required
+                            />
+                        </div>
+                    }
+                    <div className="field-wrap">
+                        <label htmlFor="address">Address</label>
+                        <input 
+                            type="text"
+                            id="address"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            placeholder="Enter your address"
+                            required
+                        />
+                    </div>
+                    {userRole === "business_partner" && 
                         <>
                             <div className="field-wrap">
                                 <label htmlFor="">Business Type</label>
-                                <select name="role" 
-                                    id="role"
-                                    value={formData.role} 
+                                <select name="business_type" 
+                                    id="business_type"
+                                    value={formData.business_type}
                                     onChange={handleChange}
                                 >
                                     <option value="">Select a role</option>
-                                    <option value="restaurantOwner">Restaurant Owner</option>
-                                    <option value="freshSupplier">Fresh Supplier</option>
+                                    <option value="restaurant">Restaurant Owner</option>
+                                    <option value="supplier">Fresh Supplier</option>
                                 </select>
                             </div>
                             <div className="field-wrap">
-                                <label htmlFor="businessName">Business Name</label>
+                                <label htmlFor="business_name">Business Name</label>
                                 <input 
                                     type="text"
-                                    id="businessName"
-                                    name="businessName"
-                                    value={formData.businessName}
+                                    id="business_name"
+                                    name="business_name"
+                                    value={formData.business_name}
                                     onChange={handleChange}
                                     placeholder="Enter your business name"
                                     required
                                 />
                             </div>
                             <div className="field-wrap">
-                                <label htmlFor="businessId">Business ID</label>
+                                <label htmlFor="business_id">Business ID</label>
                                 <input 
                                     type="text"
-                                    id="businessId"
-                                    name="businessId"
-                                    value={formData.businessId}
+                                    id="business_id"
+                                    name="business_id"
+                                    value={formData.business_id}
                                     onChange={handleChange}
                                     placeholder="Enter your business ID"
                                     required
@@ -109,11 +232,12 @@ export default function SignUp() {
                     <div className="field-wrap">
                         <label htmlFor="password">Password</label>
                         <input 
-                            type="text"
+                            type="password"
                             id="password"
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
+                            minLength={6}
                             placeholder="Password"
                             required
                         />
@@ -121,16 +245,18 @@ export default function SignUp() {
                     <div className="field-wrap">
                         <label htmlFor="confirmPassword">Confirm your password</label>
                         <input 
-                            type="text"
+                            type="password"
                             id="confirmPassword"
                             name="confirmPassword"
-                            value={formData.password}
-                            onChange={handleChange}
+                            value={confirmPassword}
+                            onChange={handleConfirmPassword}
                             placeholder="Retype your password"
                             required
                         />
                     </div>
-                    <button type="submit" onClick={handleSubmit} className="btn mt-9 w-full">Sign Up</button>
+                    {pwError !== '' && <span className="error">{pwError}</span>}
+
+                    <button type="submit" className="btn mt-9 w-full">{loading ? "Submitting..." : "Sign Up"}</button>
                     <p className="pt-1">Already have an account? <Link href="/auth/login" className="underline">Log In</Link></p>
                 </div>
             }

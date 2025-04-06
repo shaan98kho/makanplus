@@ -21,14 +21,15 @@
   --gray03: #616161;
   --white: #ffffff;
   --lightGray: #ccc;
+  --red: #F33D32;
 }
 
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -48,6 +49,10 @@ a:not(svg) {
   color: var(--primary);
 }
 
+.error {
+  color: var(--red);
+}
+
 .navbar {
   background: var(--darkBlack);
   padding: 12px 32px;
@@ -59,10 +64,24 @@ a:not(svg) {
   transition: color ease-in-out 0.2s;
 }
 
-.navbar > a.active,
-.navbar > a:hover,
-.nav-panel > a.active,
+.navbar svg, 
+.nav-panel svg {
+ transition: color ease-in-out 0.2s; 
+}
+
+.navbar svg:hover, 
+.nav-panel svg:hover {
+  color: var(--white);
+}
+
+
+.navbar > a:not(.logo),
 .nav-panel > a:hover {
+  color: var(--white);
+}
+
+.navbar > a.active,
+.nav-panel > a.active {
   color: var(--primary);
 }
 
@@ -80,7 +99,7 @@ a:not(svg) {
 
 footer {
   background: var(--darkBlack);
-  padding: 32px;
+  padding: 64px 32px;
 }
 
 footer svg {
@@ -170,4 +189,14 @@ footer svg {
 .btn:hover {
   background: var(--primary);
   color: var(--black);
+}
+
+.credits {
+  color: var(--gray03);
+  transition: all ease-in-out 0.2s;
+  user-select: none;
+}
+
+.credits:hover {
+  color: var(--lightGray);
 }

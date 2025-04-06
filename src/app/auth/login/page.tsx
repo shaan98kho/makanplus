@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useState } from "react"
 import Link from "next/link"
 import GenericForm from "@/components/genericForm"
@@ -8,12 +9,7 @@ interface UserData {
     password: string,
 }
 
-interface LoginFormProps {
-    userData: UserData
-}
-
 export default function Login() {
-    const [email, setEmail] = useState('')
     const [formData, setFormData] = useState<UserData>({
         email: '',
         password: '',
@@ -48,7 +44,7 @@ export default function Login() {
             <div className="field-wrap">
                 <label htmlFor="password">Password</label>
                 <input 
-                    type="text"
+                    type="password"
                     id="password"
                     name="password"
                     value={formData.password}
