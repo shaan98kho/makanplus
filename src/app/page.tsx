@@ -1,44 +1,30 @@
 "use client";
 
-import { GoogleGenAI } from "@google/genai";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux"
+import { fetchGeminiContent } from "@/store/features/gemini/geminiThunk"
+import { RootState, AppDispatch } from "@/store/store"
 
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-const ai = new GoogleGenAI({ apiKey });
-
-async function generateContent(contents: string): Promise<string> {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents,
-  });
-  
-  return response.text ?? "No response returned"
-}
 
 export default function Home() {
   const [inputText, setInputText] = useState('')
-  const [outputText, setOutputText] = useState('')
   const [isToggled, setIsToggled] = useState(false)
+  const dispatch: AppDispatch = useDispatch()
+  const { content, loading, error } = useSelector((state: RootState) => state.gemini);
+
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setInputText(e.target.value)
   }
 
   const handleSubmit = async () => {
+      dispatch(fetchGeminiContent(inputText));
 
-    setOutputText("thinking...")
-    try {
-      const text = await generateContent(inputText)
-      setOutputText(text)
-    } catch (e) {
-      setOutputText("Sorry, something went wrong. Please try again.")
-    }
   }
 
   return (
     <>
       <h1>This is home page</h1>
-
 
       <button onClick={() => setIsToggled((prev) => !prev)}>Test</button>
       {isToggled &&
@@ -55,7 +41,14 @@ export default function Home() {
           </div>
           
           <button onClick={handleSubmit} className="btn mt-4">Submit</button>
-          <span>Gemini says:</span><div>{outputText}</div>
+          <span>Gemini says:</span>
+          {loading ? (
+            <p>Thinking...</p>
+          ) : error ? (
+            <p>Error: {error}</p>
+          ) : (
+            <p>{content}</p>
+          )}
         </div>
       }
     </>
