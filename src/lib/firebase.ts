@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBFVX9la0UMG6RAfGLpOMZ-agOtf4E9ikM",
-  authDomain: "makanplus-e9139.firebaseapp.com",
-  projectId: "makanplus-e9139",
-  storageBucket: "makanplus-e9139.firebasestorage.app",
-  messagingSenderId: "844676094868",
-  appId: "1:844676094868:web:af76ee096a75d406c48d81"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 
