@@ -13,6 +13,7 @@ interface RegisterPayload {
         business_id?: string,
         business_type?: string,
         business_name?: string,
+        inventory_count?: number,
         coins?: number,
         completed_module?: number,
     }
@@ -42,7 +43,8 @@ export const registerUser = createAsyncThunk(
                 const businessData = {
                     owner_id: user.uid,
                     business_type: additionalData.business_type,
-                    business_name: additionalData.business_name
+                    business_name: additionalData.business_name,
+                    inventory_count: additionalData.inventory_count
                 }
 
                 await setDoc(doc(db, 'businessPartners', user.uid), businessData)
@@ -71,13 +73,18 @@ export const registerUser = createAsyncThunk(
 export const signIn = createAsyncThunk(
     'auth/signInWithEmailAndPassword', 
     async ({email, password}: LoginPayload, {rejectWithValue}) => {
+        console.log(email, password)
+
         try {
             const userCreds = await signInWithEmailAndPassword(auth, email, password)
 
             const user = userCreds.user
+            const userInfo = {
+                uid: user.uid,
+                email: user.email,
+            }
 
-            return user
-
+            return userInfo
         }
         catch(e: any) {
             console.log("Error during login:", e.message)

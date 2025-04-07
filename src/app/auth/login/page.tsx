@@ -1,15 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-import { UseDispatch, useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { signIn } from "@/store/features/user/authThunks"
 import { RootState, AppDispatch } from "@/store/store"
 
 import Link from "next/link"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 import GenericForm from "@/components/genericForm"
+
+import { FiLoader } from "react-icons/fi"
 
 interface UserData {
     email: string,
@@ -20,11 +22,25 @@ export default function Login() {
     const [formData, setFormData] = useState<UserData>({
         email: '',
         password: '',
-      });
+    });
+    const dispatch: AppDispatch = useDispatch()
+    const { loading, success, error } = useSelector((state: RootState) => state.auth)
+    const router = useRouter()
 
     const handleSubmit = () => {
-        console.log("submitted!")
+        const payload = {
+            email: formData.email,
+            password: formData.password
+        }
+
+        dispatch(signIn(payload))
     }
+
+    useEffect(() => {
+        success && router.replace("/")
+    })
+
+    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setFormData({
@@ -60,8 +76,11 @@ export default function Login() {
                     required
                 />
             </div>
-            <button type="submit" onClick={handleSubmit} className="btn mt-9 w-full">Login</button>
-            <p className="pt-2">Don't have an account yet? <Link href="/auth/signUp" className="underline">Sign Up</Link></p>
+            <p className="microcopy pt-2">Forgot password</p>
+            
+            {error && <p className="error">{error}</p>}
+            <button type="submit" onClick={handleSubmit} className="btn mt-9 w-full">{loading ? <FiLoader /> : "Login"}</button>
+            <p className="pt-2 microcopy">Don't have an account yet? <Link href="/auth/signUp" className="underline">Sign Up</Link></p>
         </GenericForm>
     </>
 }

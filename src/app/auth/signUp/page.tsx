@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation"
 import GenericForm from "@/components/genericForm"
 import Toast from "@/components/toast"
 
+import { FiLoader } from "react-icons/fi"
+
 interface UserData {
     email: string,
     password: string,
@@ -22,6 +24,7 @@ interface UserData {
     business_name?: string,
     business_id?: string,
     business_type?: string,
+    inventory_count?: number,
 
     // fields specific to customers
     coins?: number,
@@ -40,6 +43,7 @@ export default function SignUp() {
         business_name: '',
         business_id: '',
         business_type: '',
+        inventory_count: 0,
 
         // fields specific to customers
         coins: 0,
@@ -93,6 +97,7 @@ export default function SignUp() {
                   address: formData.address,
                   business_type: formData.business_type,
                   business_name: formData.business_name,
+                  inventory_count: formData.inventory_count,
                   coins: formData.coins,
                   completed_module: formData.completed_module,
                 },
@@ -127,7 +132,7 @@ export default function SignUp() {
         <GenericForm onSubmit={handleSubmit}>
             <h1>Sign Up{userRole === '' && " As"}</h1>
             {userRole !== '' && 
-                <p className="pb-6">Changed your mind? Sign up as <span onClick={() => {{
+                <p className="pb-6 microcopy">Changed your mind? Sign up as <span onClick={() => {{
                     setuserRole(userRole === "customer" ? "business_partner" : "customer")
                     clearInput()
                     setFormData({
@@ -268,8 +273,8 @@ export default function SignUp() {
                     </div>
                     {pwError !== '' && <span className="error">{pwError}</span>}
 
-                    <button type="submit" className="btn mt-9 w-full">{loading ? "Submitting..." : "Sign Up"}</button>
-                    <p className="pt-1">Already have an account? <Link href="/auth/login" className="underline">Log In</Link></p>
+                    <button type="submit" className="btn mt-9 w-full">{loading ? <FiLoader /> : "Sign Up"}</button>
+                    <p className="pt-1 microcopy">Already have an account? <Link href="/auth/login" className="underline">Log In</Link></p>
                 </div>
             }
         </GenericForm>

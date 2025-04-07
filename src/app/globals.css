@@ -53,6 +53,11 @@ a:not(svg) {
   color: var(--red);
 }
 
+.microcopy {
+  color: var(--gray03);
+  font-size: 14px;
+}
+
 .navbar {
   background: var(--darkBlack);
   padding: 12px 32px;
