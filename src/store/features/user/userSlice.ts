@@ -1,40 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { fetchUserProfile } from "./userThunks"
-
-interface CustomerProfile {
-    uid: string,
-    email: string,
-    name: string,
-    address: string,
-    coins: number,
-    progress: number,
-    role: 'customer'
-}
-
-interface BusinessPartnerProfile {
-    uid: string,
-    email: string,
-    address: string,
-    business_type: 'restaurant' | 'supplier',
-    business_name: string,
-    business_id: string,
-    inventory_count: number,
-    role: 'business_partner',
-    
-}
-
-interface UserProfile {
-    user: CustomerProfile | BusinessPartnerProfile
-}
+import { fetchUserProfile, fetchUserProfileByRole } from "./userThunks"
+import { UserProfile } from "./userTypes"
 
 interface UserState {
-    user: UserProfile | null,
+    curUser: UserProfile | null,
     loading: boolean,
     error: string | null
 }
 
-const initialState: UserState = {
-    user: null,
+const initialState: UserState | null = {
+    curUser: null,
     loading: false,
     error: null
 }
@@ -45,6 +20,40 @@ const userSlice = createSlice({
     reducers: {
         fetchUserProfile: (state, action) => {
             return action.payload
+        },
+        fetchUserProfileByRole: (state, action) =>{
+            return action.payload
         }
     },
+    extraReducers: (builder) => {
+        builder
+        .addCase(fetchUserProfile.pending, (state) => {
+            state.loading = true,
+            state.error = null
+        })
+        .addCase(fetchUserProfile.fulfilled, (state, action) => {
+            state.loading = false,
+            state.curUser = action.payload
+        })
+        .addCase(fetchUserProfile.rejected, (state, action) => {
+            state.loading = false,
+            state.error = action.payload as string,
+            state.curUser = null
+        })
+        .addCase(fetchUserProfileByRole.pending, (state) => {
+            state.loading = true,
+            state.error = null
+        })
+        .addCase(fetchUserProfileByRole.fulfilled, (state, action) => {
+            state.loading = false,
+            state.curUser = action.payload
+        })
+        .addCase(fetchUserProfileByRole.rejected, (state, action) => {
+            state.loading = false,
+            state.error = action.payload as string,
+            state.curUser = null
+        })
+    },
 })
+
+export default userSlice.reducer

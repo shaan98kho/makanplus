@@ -1,10 +1,12 @@
 import "./globals.css"
 
-import { store } from "@/store/store"
 import { Providers } from "@/components/providers"
+import { PersistGate } from "redux-persist/integration/react"
+import { store, persistor } from "@/store/store"
 
 import NavBar from "@/components/navbar"
 import Footer from "@/components/footer"
+import ClientProviders from "@/components/clientComponents"
 
 export default function RootLayout({
   children,
@@ -15,18 +17,14 @@ export default function RootLayout({
     <html lang="en">
       <body className="">
         <div className="flex flex-col min-h-screen w-full">
-          <Providers>
-            <NavBar hrefs={[
-              {label: "Home", path: "/"},
-              {label: "About Us", path: "/about"},
-              {label: "Market", path: "/market"},
-              {label: "Sign In", path: "/auth/login"},
-            ]}/>
-            <main className="px-8 py-3">
-              {children}
-            </main>
-            <Footer />
-          </Providers>
+          <ClientProviders>
+            <NavBar />
+              <main className="px-8 py-3">
+                {children}
+              </main>
+              <Footer />
+
+          </ClientProviders>
         </div>
       </body>
     </html>

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 
 import { useDispatch, useSelector } from "react-redux"
 import { signIn } from "@/store/features/user/authThunks"
+import { resetStatus } from "@/store/features/user/authSlice"
+
 import { RootState, AppDispatch } from "@/store/store"
 
 import Link from "next/link"
@@ -27,6 +29,10 @@ export default function Login() {
     const { loading, success, error } = useSelector((state: RootState) => state.auth)
     const router = useRouter()
 
+    useEffect(() => {
+        dispatch(resetStatus())
+    }, [dispatch])
+
     const handleSubmit = () => {
         const payload = {
             email: formData.email,
@@ -38,7 +44,7 @@ export default function Login() {
 
     useEffect(() => {
         success && router.replace("/")
-    })
+    }, [success, router])
 
     
 

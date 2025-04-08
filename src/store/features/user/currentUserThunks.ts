@@ -1,11 +1,30 @@
 import { auth, db } from "@/lib/firebase"
+import { createAsyncThunk } from "@reduxjs/toolkit"
+import { User } from "firebase/auth"
+import {
+    getDoc,
+    setDoc,
+    doc,
+} from "firebase/firestore/lite"
+
 import { 
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     signOut 
 } from "firebase/auth"
-import { setDoc, doc } from "firebase/firestore/lite"
-import { createAsyncThunk } from "@reduxjs/toolkit"
+
+import { UserProfile } from "./userTypes"
+
+interface UserPayload {
+    user: UserProfile | null,
+    loading: boolean,
+    error: string | null
+}
+
+interface UserRoleProfilePayload {
+    uid: string,
+    collectionName: string
+}
 
 interface RegisterPayload {
     email: string,
@@ -103,6 +122,39 @@ export const userSignOut = createAsyncThunk(
             await signOut(auth)
         } catch(e: any) {
             console.log("Error signing out:", e.message)
+            return rejectWithValue(e.message)
+        }
+    }
+)
+
+export const fetchUserProfile = createAsyncThunk<UserProfile, string, {rejectValue: string}>(
+    'user/fetchUserProfile',
+    async (uid, {rejectWithValue}) => {
+        try {
+            const docRef = doc(db, "users", uid)
+            const snapshot = await getDoc(docRef)
+        
+            const profile = snapshot.exists() ? snapshot.data() : null
+            return profile as UserProfile
+        } catch (e: any) {
+            console.log("There's an error while fetching profile:", e.message)
+            return rejectWithValue(e.message)
+        }
+    }
+)
+
+export const fetchUserProfileByRole = createAsyncThunk(
+    'user/fetchUserProfileByRole',
+    async ({uid, collectionName}: UserRoleProfilePayload, {rejectWithValue}) => {
+        try {
+            const docRef = doc(db, collectionName, uid)
+            const snapshot = await getDoc(docRef)
+            // console.log(snapshot)
+
+            const profile = snapshot.exists() ? snapshot.data() : null
+            return profile as UserProfile
+        } catch (e: any) {
+            console.log("There's an error while fetching profile:", e.message)
             return rejectWithValue(e.message)
         }
     }

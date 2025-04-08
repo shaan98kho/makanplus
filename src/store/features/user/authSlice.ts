@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { registerUser, signIn } from "./authThunks"
+import { registerUser, signIn, userSignOut } from "./authThunks"
 
 interface AuthState {
     user: any | null,
@@ -19,8 +19,17 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        signOut: (state) => {
+        userSignOutsignOut: (state) => {
             state.user = null
+        },
+        clearUserProfile: (state) => {
+            state.user = null,
+            state.loading = false,
+            state.error = null
+        },
+        resetStatus(state) {
+            state.success = false,
+            state.error = null
         },
     },
     extraReducers: (builder) => {
@@ -57,7 +66,26 @@ const authSlice = createSlice({
                 state.error = action.payload as string
                 state.success = false
             })
+            // sign out
+            .addCase(userSignOut.pending, (state) => {
+                state.loading = true,
+                state.error = null,
+                state.success = false
+            })
+            .addCase(userSignOut.fulfilled, (state, action) => {
+                console.log("SIGN OUT fulfilled — clearing user");  
+
+                state.loading = false,
+                state.user = null,
+                state.success = true
+            })
+            .addCase(userSignOut.rejected, (state, action) => {
+                state.loading = false,
+                state.error = action.payload as string
+                state.success = false
+            })
         }
 })
 
+export const { clearUserProfile, resetStatus } = authSlice.actions;
 export default authSlice.reducer

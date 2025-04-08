@@ -71,6 +71,7 @@ export default function SignUp() {
                 business_name: '',
                 business_id: '',
                 business_type: '',
+                inventory_count: 0,
 
                 // fields specific to customers
                 coins: 0,
