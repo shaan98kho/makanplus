@@ -4,6 +4,7 @@ import "./../app/globals.css"
 
 import { useRef, useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 import useWindowSize from "@/hooks/useWindowSize"
 import useOnClickOutside from "@/hooks/useOnClickOutside"
@@ -48,16 +49,18 @@ export default function NavBar() {
     }
 
     const signOut = () => {dispatch(userSignOut())}
+    const path = usePathname()
+
 
     const ref = useRef<HTMLDivElement>(null)
     useOnClickOutside({ref: ref, handler: closePanel})
 
     const navElements = () => {
         return <>
-            <Link href="/">Home</Link>
-            <Link href="/about">About Us</Link>
-            <Link href="/market">Market</Link>
-            <Link href="/signIn">Sign In</Link>
+            <Link href="/" className={`${path === "/" ? "active font-bold" : ""}`}>Home</Link>
+            <Link href="/about" className={`${path === "/about" ? "active font-bold" : ""}`}>About Us</Link>
+            <Link href="/market" className={`${path === "/market" ? "active font-bold" : ""}`}>Market</Link>
+            <Link href="/signIn" className={`${path === "/signIn" ? "active font-bold" : ""}`}>Sign In</Link>
             {/* {user 
                 ? <>                    
                     <FaRegUserCircle /><button className="cursor-pointer" onClick={signOut}>Sign Out</button>
