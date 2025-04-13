@@ -24,6 +24,7 @@ import { FaRegUserCircle } from "react-icons/fa"
 export default function NavBar() {
 
     const reduxUser = useSelector((state: RootState) => state.auth.user);
+    const coins = useSelector((state: RootState) => state.game.coins);
     console.log("reduxUser:", reduxUser);
 
     const dispatch = useDispatch<AppDispatch>()
@@ -73,6 +74,11 @@ export default function NavBar() {
     return <>
         <nav className="navbar flex gap-12 items-center justify-end">
             <Link href="/" className="logo mr-auto cursor-pointer">MAKAN+</Link>
+
+            {/* 🪙 Coin Count Display */}
+             <div className="text-yellow-600 font-bold text-sm flex items-center gap-1">
+              🪙 {coins} Coins
+             </div>
 
             {width && width < 910 
             ? (<button className="w-9 h-9" onClick={handleTogglePanel}><IoMenuOutline className="w-full h-full cursor-pointer" /></button>)
